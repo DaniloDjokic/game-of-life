@@ -1,4 +1,5 @@
-use super::cell::Cell;
+mod cell;
+use cell::Cell;
 
 pub struct Grid {
     cells: Vec<Vec<Cell>>
