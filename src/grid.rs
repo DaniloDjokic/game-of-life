@@ -2,10 +2,11 @@ mod cell;
 mod directions;
 use directions::Directions;
 use cell::Cell;
+use rand::Rng;
 
 pub struct Grid {
     cells: Vec<Vec<Cell>>,
-    directions: Vec<(i32, i32)>
+    directions: Vec<(isize, isize)>
 }
 
 impl Grid {
@@ -15,6 +16,8 @@ impl Grid {
         for (index, sub_vector) in cells.iter_mut().enumerate() {
             for (sub_index, cell) in sub_vector.iter_mut().enumerate() {
                 cell.set_xy(index as u32, sub_index as u32);
+                let is_alive = rand::thread_rng().gen_bool(0.1);
+                cell.set_is_alive(is_alive);
             }
         }
         Self { cells: cells, directions: Directions::get_all_directions() }
@@ -29,34 +32,37 @@ impl Grid {
         }
     }
 
-    #[allow(unused)]
     pub fn calculate_cell_life(&mut self){
         for i in 0..self.cells.len() {
             for j in 0..self.cells[i].len(){
-                let num_of_adjecent = self.calc_num_of_alive_adjecent(i as i32, j as i32);
+                let num_of_adjecent = self.calc_num_of_alive_adjecent(i, j);
                 self.cells[i][j].set_alive_in_next_gen(num_of_adjecent);
             }
         }
     }
 
-    #[allow(unused)]
-    fn calc_num_of_alive_adjecent(&self, x: i32, y: i32) -> u32 {        
+    fn calc_num_of_alive_adjecent(&self, x: usize, y: usize) -> u32 {        
         let mut sum = 0;        
 
         for i in self.directions.iter() {
-            //This will probably panic when -1 is added to the 0 index and then converted to usize
-            let offset_x = (x + i.0) as usize;
-            let offset_y = (y + i.1) as usize;
+            if self.is_out_of_bounds(x, y) {
+                continue;
+            }
 
-            if offset_x >= 0 && offset_y >= 0 {
-                let cell = &self.cells[offset_x][offset_y];
+            let offset_x = (x as isize) + i.0;
+            let offset_y = (y as isize) + i.1;
 
-                if cell.is_alive() {
-                    sum += 1;
-                }
+            let cell = &self.cells[offset_x as usize][offset_y as usize];
+
+            if cell.is_alive() {
+                sum += 1;
             }
         }
 
         sum
+    }
+
+    fn is_out_of_bounds(&self, x: usize, y: usize) -> bool {
+        x <= 1 || x >= self.cells.len() - 1 || y <= 0 || y >= self.cells[x].len() - 1 
     }
 }

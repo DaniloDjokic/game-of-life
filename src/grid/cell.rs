@@ -28,6 +28,10 @@ impl Cell {
         self.is_alive
     }
 
+    pub fn set_is_alive(&mut self, val: bool) {
+        self.is_alive = val;
+    }
+
     pub fn set_alive_in_next_gen(&mut self, adjecent_alive: u32){
         let alive = if self.is_alive {
             match adjecent_alive {
