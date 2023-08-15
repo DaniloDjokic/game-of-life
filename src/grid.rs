@@ -10,25 +10,33 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new(width: usize, height: usize) -> Self {
-        let mut cells = vec![vec![Cell::new(0,0); width]; height];
+    pub fn new(width: usize, height: usize, spawn_rate: f64) -> Self {
+        let mut cells = vec![vec![Cell::new(0,0); height]; width];
 
         for (index, sub_vector) in cells.iter_mut().enumerate() {
             for (sub_index, cell) in sub_vector.iter_mut().enumerate() {
                 cell.set_xy(index as u32, sub_index as u32);
-                let is_alive = rand::thread_rng().gen_bool(0.1);
+                let is_alive = rand::thread_rng().gen_bool(spawn_rate);
                 cell.set_is_alive(is_alive);
             }
         }
         Self { cells: cells, directions: Directions::get_all_directions() }
     }
 
-    pub fn display_all(&self){
-        for vec in self.cells.iter() {
-            for cell in vec {
-                cell.display();
+    pub fn display_all(&self) {
+        for (idx, row) in self.cells.iter().enumerate() {
+            for (sub_idx, cell) in row.iter().enumerate() {
+                cell.display(idx, sub_idx);
+            }  
+        }
+    }
+
+    pub fn display_all_and_update(&mut self){
+        for i in 0..self.cells.len() {
+            for j in 0..self.cells[i].len(){
+                self.cells[i][j].display(i, j);
+                self.cells[i][j].update_to_current_gen();
             }
-            println!("");
         }
     }
 
