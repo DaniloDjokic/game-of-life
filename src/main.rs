@@ -6,7 +6,7 @@ use grid::Grid;
 use std::{thread, time::Duration};
 
 fn main() {
-    let mut grid = Grid::new(100,40, 0.1);
+    let mut grid = Grid::new(100,30, 0.3, 10);
     grid.display_all();
 
     loop {

@@ -2,8 +2,8 @@ use crate::terminal;
 
 #[derive(Clone)]
 pub struct Cell {
-    x: u32,
-    y: u32,
+    x: usize,
+    y: usize,
     is_alive: bool,
     is_alive_in_next_gen: bool
 }
@@ -17,11 +17,16 @@ impl Cell {
         self.is_alive = self.is_alive_in_next_gen;
     }
 
-    pub fn new(x: u32, y: u32) -> Self {
-        Self { x: x, y: y, is_alive: false, is_alive_in_next_gen: false }
+    pub fn new(x: usize, y: usize) -> Self {
+        Self { 
+            x: x, 
+            y: y, 
+            is_alive: false, 
+            is_alive_in_next_gen: false
+        }
     }
 
-    pub fn set_xy(&mut self, x: u32, y: u32) {
+    pub fn set_xy(&mut self, x: usize, y: usize) {
         self.x = x;
         self.y = y;
     }

@@ -10,17 +10,41 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new(width: usize, height: usize, spawn_rate: f64) -> Self {
+    pub fn new(width: usize, height: usize, spawn_rate: f64, initial_field_size: usize) -> Self {
+        if initial_field_size >= height || initial_field_size >= width{
+            panic!("Field size cannot be equal or higher than grid size");
+        }
+        
         let mut cells = vec![vec![Cell::new(0,0); height]; width];
 
         for (index, sub_vector) in cells.iter_mut().enumerate() {
             for (sub_index, cell) in sub_vector.iter_mut().enumerate() {
-                cell.set_xy(index as u32, sub_index as u32);
-                let is_alive = rand::thread_rng().gen_bool(spawn_rate);
-                cell.set_is_alive(is_alive);
+                if Grid::can_initialize_cell(width, height, index, sub_index, initial_field_size){
+                    Grid::initialize_cell(cell, index, sub_index, spawn_rate);
+                }
             }
         }
         Self { cells: cells, directions: Directions::get_all_directions() }
+    }
+
+    fn initialize_cell(cell: &mut Cell, x: usize, y: usize, spawn_rate: f64){
+        cell.set_xy(x, y);
+        let is_alive = rand::thread_rng().gen_bool(spawn_rate);
+        cell.set_is_alive(is_alive);
+    }
+
+    fn can_initialize_cell(width: usize, height: usize, x: usize, y: usize, initial_field_size: usize) -> bool {
+        let midpoint_x = height / 2;
+        let midpoint_y = width / 2;
+
+        let field_half_size = initial_field_size / 2;
+
+        let size_left = midpoint_x - field_half_size;
+        let size_right = midpoint_x + field_half_size;
+        let size_up = midpoint_y - field_half_size;
+        let size_down = midpoint_y + field_half_size;
+
+        y > size_left && y < size_right && x > size_up && x < size_down
     }
 
     pub fn display_all(&self) {
@@ -71,6 +95,6 @@ impl Grid {
     }
 
     fn is_out_of_bounds(&self, x: usize, y: usize) -> bool {
-        x <= 1 || x >= self.cells.len() - 1 || y <= 0 || y >= self.cells[x].len() - 1 
+        x <= 0 || x >= self.cells.len() - 1 || y <= 0 || y >= self.cells[x].len() - 1 
     }
 }
