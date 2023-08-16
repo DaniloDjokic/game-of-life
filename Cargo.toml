@@ -6,5 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+config-file = { version = "0.2.3", features = ["json"] }
 crossterm = "0.27.0"
 rand = "0.8.5"
+serde = "1.0.183"
+serde_derive = "1.0.183"

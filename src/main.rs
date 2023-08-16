@@ -2,12 +2,27 @@ extern crate crossterm;
 
 mod grid;
 mod terminal;
+mod config;
+
 use grid::Grid;
 use std::{thread, time::Duration};
+use config::Config;
 
-fn main() {
-    let mut grid = Grid::new(100,30, 0.3, 10);
+fn main(){
+    let config = Config::init_from_file();
+    let mut grid = init_grid(&config);
+    play_game(&mut grid);
+}
+
+fn init_grid(config: &Config) -> Grid {
+    let grid = Grid::new(config.width, config.height, config.spawn_rate, config.initial_field_size);
     grid.display_all();
+    grid
+}
+
+fn play_game(grid: &mut Grid){
+    grid.calculate_cell_life();
+    grid.display_all_and_update();
 
     loop {
         const GEN_DURATION_MILISECONDS: u64 = 250; 

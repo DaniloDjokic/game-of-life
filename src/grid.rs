@@ -1,8 +1,9 @@
 mod cell;
 mod directions;
+mod grid_init;
+mod grid_display;
 use directions::Directions;
 use cell::Cell;
-use rand::Rng;
 
 pub struct Grid {
     cells: Vec<Vec<Cell>>,
@@ -19,49 +20,12 @@ impl Grid {
 
         for (index, sub_vector) in cells.iter_mut().enumerate() {
             for (sub_index, cell) in sub_vector.iter_mut().enumerate() {
-                if Grid::can_initialize_cell(width, height, index, sub_index, initial_field_size){
-                    Grid::initialize_cell(cell, index, sub_index, spawn_rate);
+                if grid_init::can_initialize_cell(width, height, index, sub_index, initial_field_size){
+                    grid_init::initialize_cell(cell, index, sub_index, spawn_rate);
                 }
             }
         }
         Self { cells: cells, directions: Directions::get_all_directions() }
-    }
-
-    fn initialize_cell(cell: &mut Cell, x: usize, y: usize, spawn_rate: f64){
-        cell.set_xy(x, y);
-        let is_alive = rand::thread_rng().gen_bool(spawn_rate);
-        cell.set_is_alive(is_alive);
-    }
-
-    fn can_initialize_cell(width: usize, height: usize, x: usize, y: usize, initial_field_size: usize) -> bool {
-        let midpoint_x = height / 2;
-        let midpoint_y = width / 2;
-
-        let field_half_size = initial_field_size / 2;
-
-        let size_left = midpoint_x - field_half_size;
-        let size_right = midpoint_x + field_half_size;
-        let size_up = midpoint_y - field_half_size;
-        let size_down = midpoint_y + field_half_size;
-
-        y > size_left && y < size_right && x > size_up && x < size_down
-    }
-
-    pub fn display_all(&self) {
-        for (idx, row) in self.cells.iter().enumerate() {
-            for (sub_idx, cell) in row.iter().enumerate() {
-                cell.display(idx, sub_idx);
-            }  
-        }
-    }
-
-    pub fn display_all_and_update(&mut self){
-        for i in 0..self.cells.len() {
-            for j in 0..self.cells[i].len(){
-                self.cells[i][j].display(i, j);
-                self.cells[i][j].update_to_current_gen();
-            }
-        }
     }
 
     pub fn calculate_cell_life(&mut self){
