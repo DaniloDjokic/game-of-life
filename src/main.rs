@@ -15,7 +15,7 @@ fn main(){
 }
 
 fn init_grid(config: &Config) -> Grid {
-    let grid = Grid::new(config.width, config.height, config.spawn_rate, config.initial_field_size);
+    let grid = Grid::new(config.width, config.height, &config.seed, config.initial_field_size);
     grid.display_all();
     grid
 }

@@ -1,4 +1,4 @@
 width = 100
 height = 30
-spawn_rate = 0.25
 initial_field_size = 10
+seed = "asd"

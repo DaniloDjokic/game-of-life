@@ -1,9 +1,21 @@
-use rand::Rng;
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use super::cell::Cell;
 
-pub fn initialize_cell(cell: &mut Cell, x: usize, y: usize, spawn_rate: f64){
+pub struct CellRng {
+    pub source: StdRng
+}
+
+impl CellRng {
+    pub fn new(seed: &str) -> Self {
+        let seed_bytes = seed.as_bytes().try_into().unwrap();
+        let source = StdRng::from_seed(seed_bytes);
+        Self { source: source }
+    }
+}
+
+pub fn initialize_cell(cell: &mut Cell, x: usize, y: usize, rng: &mut CellRng){
     cell.set_xy(x, y);
-    let is_alive = rand::thread_rng().gen_bool(spawn_rate);
+    let is_alive: bool = rng.source.gen();
     cell.set_is_alive(is_alive);
 }
 
